@@ -1,0 +1,43 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <preConditions>
+        <runningAs username="indexadmin"/>
+    </preConditions>
+
+    <changeSet id="changelog-0.1" author="frankfu">
+        <createTable tableName="rinex-file-index">
+            <column name="RinexFileId" type="varchar(50)" autoIncrement="false">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="StationId" type="varchar(8)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RinexVersion" type="varchar(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="MetadataValidStatus" type="varchar(20)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FileType" type="varchar(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FilePeriod" type="varchar(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="StartDate" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FileLocation" type="varchar(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EventNumber" type="number(4)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

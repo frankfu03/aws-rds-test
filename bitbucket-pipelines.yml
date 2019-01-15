@@ -1,0 +1,58 @@
+image: geoscienceaustralia/geodesy-archive-pipeline
+
+options:
+  docker: true
+  size: 2x
+
+pipelines:
+  default:
+    - step:
+        name: Test
+        script:
+          - nix-shell --command "./build.sh"
+          - nix-shell --command "./deploy.sh dev --dry-run"
+        caches:
+          - maven
+
+  branches:
+    master:
+      - step:
+          name: Test and Deploy to Dev/Test
+          script:
+            - nix-shell --command "./build.sh"
+            - nix-shell --command "./deploy.sh dev"
+            - nix-shell --command "./run-system-tests.sh ci dev"
+          caches:
+            - maven
+
+  custom:
+    update-rinex-file-index-table:
+      - step:
+          name: Run liquibase to update tables
+          script:
+            - nix-shell --command "mvn liquibase:update"
+
+    deploy-to-test:
+      - step:
+          name: Test and Deploy to Test
+          script:
+            - nix-shell --command "./build.sh"
+            - nix-shell --command "./deploy.sh test"
+            - nix-shell --command "./run-system-tests.sh ci test"
+          caches:
+            - maven
+
+    deploy-to-prod:
+      - step:
+          name: Test and Deploy to Prod
+          script:
+            - nix-shell --command "./build.sh"
+            - nix-shell --command "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PROD AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PROD; ./deploy.sh prod"
+            - nix-shell --command "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PROD AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PROD; ./run-system-tests.sh ci prod"
+          caches:
+            - maven
+
+definitions:
+    services:
+        docker:
+            memory: 2048
