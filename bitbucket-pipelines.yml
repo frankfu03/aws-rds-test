@@ -9,7 +9,7 @@ pipelines:
     - step:
         name: Test
         script:
-          - nix-shell --command "./build.sh"
+          - nix-shell --command "./build.sh -Pdev"
           - nix-shell --command "./deploy.sh dev --dry-run"
         caches:
           - maven
@@ -17,26 +17,41 @@ pipelines:
   branches:
     master:
       - step:
-          name: Test and Deploy to Dev/Test
+          name: Test and Deploy to Dev
           script:
-            - nix-shell --command "./build.sh"
+            - nix-shell --command "./build.sh -Pdev"
             - nix-shell --command "./deploy.sh dev"
             - nix-shell --command "./run-system-tests.sh ci dev"
           caches:
             - maven
 
   custom:
-    update-rinex-file-index-table:
+    update-db-dev:
       - step:
-          name: Run liquibase to update tables
+          name: Run liquibase to update db tables on Dev
           script:
-            - nix-shell --command "mvn liquibase:update"
+            - nix-shell --command "./build.sh -Pdev"
+            - nix-shell --command "mvn liquibase:update -Pdev -pl subscription/rinex-file-index-projection"
+
+    update-db-test:
+      - step:
+          name: Run liquibase to update db tables on Test
+          script:
+            - nix-shell --command "./build.sh -Ptest"
+            - nix-shell --command "mvn liquibase:update -Ptest -pl subscription/rinex-file-index-projection"
+
+    update-db-prod:
+      - step:
+          name: Run liquibase to update db tables on Prod
+          script:
+            - nix-shell --command "./build.sh -Pprod"
+            - nix-shell --command "mvn liquibase:update -Pprod -pl subscription/rinex-file-index-projection"
 
     deploy-to-test:
       - step:
           name: Test and Deploy to Test
           script:
-            - nix-shell --command "./build.sh"
+            - nix-shell --command "./build.sh -Ptest"
             - nix-shell --command "./deploy.sh test"
             - nix-shell --command "./run-system-tests.sh ci test"
           caches:
@@ -46,7 +61,7 @@ pipelines:
       - step:
           name: Test and Deploy to Prod
           script:
-            - nix-shell --command "./build.sh"
+            - nix-shell --command "./build.sh -Pprod"
             - nix-shell --command "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PROD AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PROD; ./deploy.sh prod"
             - nix-shell --command "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID_PROD AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY_PROD; ./run-system-tests.sh ci prod"
           caches:

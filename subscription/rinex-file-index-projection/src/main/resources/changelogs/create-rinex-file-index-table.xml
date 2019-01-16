@@ -20,7 +20,7 @@
                 <constraints nullable="false"/>
             </column>
             <column name="MetadataValidStatus" type="varchar(20)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="FileType" type="varchar(3)">
                 <constraints nullable="false"/>
@@ -32,10 +32,13 @@
                 <constraints nullable="false"/>
             </column>
             <column name="FileLocation" type="varchar(200)">
-                <constraints nullable="false"/>
+                <constraints nullable="true"/>
             </column>
             <column name="EventNumber" type="number(4)">
                 <constraints nullable="false"/>
+            </column>
+            <column name="isPublic" type="varchar(1)">
+                <constraints nullable="true"/>
             </column>
         </createTable>
     </changeSet>

@@ -25,7 +25,6 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-maven-plugin</artifactId>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -39,15 +38,17 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
+                <version>${liquibase.version}</version>
                 <configuration>
-                    <propertyFile>src/main/resources/index-db-liquibase.properties</propertyFile>
-                    <changeLogFile>src/main/resources/changelogs/index-db.changelog.xml</changeLogFile>
+                    <propertyFile>${liquibase.properties.path}</propertyFile>
+                    <changeLogFile>src/main/resources/changelogs/rinex-file-index-db.changelog.xml</changeLogFile>
+                    <propertyFileWillOverride>true</propertyFileWillOverride>
                     <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
                     <clearCheckSums>true</clearCheckSums>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>create-rinex-file-index-table</id>
+                        <id>update-rinex-file-index-database</id>
                         <phase>process-resources</phase>
                         <goals>
                             <goal>update</goal>
@@ -84,4 +85,28 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <liquibase.properties.path>${project.basedir}/src/main/resources/dev-index-db.liquibase.properties</liquibase.properties.path>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <liquibase.properties.path>${project.basedir}/src/main/resources/test-index-db.liquibase.properties</liquibase.properties.path>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <liquibase.properties.path>${project.basedir}/src/main/resources/prod-index-db.liquibase.properties</liquibase.properties.path>
+            </properties>
+        </profile>
+    </profiles>
 </project>
