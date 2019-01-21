@@ -9,7 +9,7 @@
     </preConditions>
 
     <changeSet id="changelog-0.1" author="frankfu">
-        <createTable tableName="rinex-file-index">
+        <createTable tableName="rinex_file_index">
             <column name="RinexFileId" type="varchar(50)" autoIncrement="false">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
