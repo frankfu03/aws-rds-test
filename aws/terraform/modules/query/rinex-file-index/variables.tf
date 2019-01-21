@@ -8,7 +8,7 @@ variable "environment" {}
 variable "rds_hostname" {}
 
 variable "index_db_name" {
-  default = "rinex-file-index"
+  default = "rinex_file_index"
 }
 
 variable "index_username" {
